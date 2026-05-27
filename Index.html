@@ -265,7 +265,7 @@
       }
     }
 
-    window.addEventListener('load', ()=>{const pre=document.getElementById('preloader');if(pre)pre.style.display='none';document.getElementById('year').textContent=new Date().getFullYear();const contactForm=document.getElementById('contactForm');if(contactForm){contactForm.addEventListener('submit', handleContactSubmission);} });
+    window.addEventListener('load', ()=>{const pre=document.getElementById('preloader');if(pre)pre.style.display='none';document.getElementById('year').textContent=new Date().getFullYear();});
     const lenis=new Lenis();function raf(t){lenis.raf(t);requestAnimationFrame(raf);}requestAnimationFrame(raf);
     gsap.registerPlugin(ScrollTrigger);
     const heroIntro = gsap.timeline({defaults:{duration:1.1,ease:'power3.out'}});
