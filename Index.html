@@ -189,7 +189,7 @@
       <h2 class="section-heading">Contact Us</h2>
       <p class="section-sub">Reach out for a free consultation and a complete digital growth plan.</p>
       <div class="contact-grid">
-        <form class="contact-form glass" onsubmit="alert('Form submitted — demo only');return false;">
+        <form class="contact-form glass" id="contactForm">
           <label>Name<input required type="text" placeholder="Your name"></label>
           <label>Email<input required type="email" placeholder="digitalvistara.in@gmail.com"></label>
           <label>Message<textarea required placeholder="Tell us about your project"></textarea></label>
@@ -220,8 +220,52 @@
   <script src="https://unpkg.com/gsap@3.12.2/dist/gsap.min.js"></script>
   <script src="https://unpkg.com/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.10/dist/lenis.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-firestore-compat.js"></script>
   <script>
-    window.addEventListener('load', ()=>{const pre=document.getElementById('preloader');if(pre)pre.style.display='none';document.getElementById('year').textContent=new Date().getFullYear();});
+    // Firebase configuration - replace with your own Firebase project values
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID",
+      measurementId: "YOUR_MEASUREMENT_ID"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    async function handleContactSubmission(event) {
+      event.preventDefault();
+      const form = event.target;
+      const name = form.querySelector('input[type="text"]').value.trim();
+      const email = form.querySelector('input[type="email"]').value.trim();
+      const message = form.querySelector('textarea').value.trim();
+
+      if (!name || !email || !message) {
+        alert('Please fill all fields before submitting.');
+        return;
+      }
+
+      try {
+        await db.collection('contactMessages').add({
+          name,
+          email,
+          message,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert('Thank you! Your message has been sent successfully.');
+        form.reset();
+      } catch (error) {
+        console.error('Firebase submission error:', error);
+        alert('Sorry, something went wrong while sending your message.');
+      }
+    }
+
+    window.addEventListener('load', ()=>{const pre=document.getElementById('preloader');if(pre)pre.style.display='none';document.getElementById('year').textContent=new Date().getFullYear();const contactForm=document.getElementById('contactForm');if(contactForm){contactForm.addEventListener('submit', handleContactSubmission);} });
     const lenis=new Lenis();function raf(t){lenis.raf(t);requestAnimationFrame(raf);}requestAnimationFrame(raf);
     gsap.registerPlugin(ScrollTrigger);
     const heroIntro = gsap.timeline({defaults:{duration:1.1,ease:'power3.out'}});
